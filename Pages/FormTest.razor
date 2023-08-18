@@ -1,0 +1,56 @@
+﻿@page "/FormTest"
+
+@using System.ComponentModel.DataAnnotations;
+
+<div class="mb-3">
+    <h2>Simple Form Test</h2>
+</div>
+<div class="mb-3">
+    The submit handler has been invoked <span>@_submitCount</span> times.
+</div>
+<div>
+    <EditForm Model="_model" OnSubmit="HandleSubmit">
+
+        <DataAnnotationsValidator />
+
+        <ValidationSummary />
+
+        <div class="w-50">
+            <label for="title">Title</label>
+            <InputText @bind-Value=_model.Title id="title" class="form-control" />
+            <ValidationMessage For="@(() => _model.Title)" />
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+    </EditForm>
+</div>
+
+@code {
+    public class MyModel
+    {
+        [Required]
+        public string Title { get; set; } = "A Title";
+    }
+
+    MyModel _model = new();
+
+    EditContext? _editContext;
+
+    int _submitCount = 0;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_model);
+        _submitCount = 0;
+        base.OnInitialized();
+    }
+
+    void HandleSubmit(EditContext editContext)
+    {
+        _submitCount++;
+        var isValid = editContext.Validate();
+    }
+}
